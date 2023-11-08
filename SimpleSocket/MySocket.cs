@@ -24,7 +24,7 @@ public class MySocket
                 NetworkStream stream = client.GetStream();
                 byte[] data = new byte[256];
                 int bytesRead = stream.Read(data, 0, data.Length);
-                string message = Encoding.ASCII.GetString(data, 0, data.Length);
+                string message = Encoding.ASCII.GetString(data, 0, bytesRead);
                 Console.WriteLine("Користувач: " + message);
                 byte[] reply = Encoding.ASCII.GetBytes("Повідомлення отримано");
                 stream.Write(reply, 0, reply.Length);
