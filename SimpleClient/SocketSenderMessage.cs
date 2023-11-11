@@ -16,9 +16,9 @@ public class SocketSenderMessage
         _stream = _tcpClient.GetStream();
     }
 
-    public void SendMessage(string text)
+    public void SendMessage()
     {
-        var task = Task.Run(() => ReceiveData(_tcpClient)).ConfigureAwait(false);
+        var task = Task.Run(() => ReceiveData(_tcpClient));
 
         string s = String.Empty;
         while (!string.IsNullOrEmpty(s = Console.ReadLine()))
@@ -37,7 +37,7 @@ public class SocketSenderMessage
                     _stream.Write(buffer, 0, buffer.Length);   
                 }
 
-                ReceiveData(_tcpClient);
+                //ReceiveData(_tcpClient);
             }
         }
         
@@ -87,6 +87,7 @@ public class SocketSenderMessage
                     }
                 }
             }
+            Console.Clear();
             Console.WriteLine(data);
         }
         

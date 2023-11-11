@@ -90,7 +90,8 @@ public class MySocket
         {
             for (int j = 0; j < table.GetLength(1); j++)
             {
-                builder.Append(table[i, j] + ' ');
+                var value = table[i, j];
+                builder.Append(value.ToString() + ' ');
             }
 
             builder.AppendLine();
@@ -102,7 +103,7 @@ public class MySocket
     private void SendInitialTableToClient(NetworkStream stream)
     {
         var data = ConvertTableToString();
-        byte[] buffer = Encoding.ASCII.GetBytes(data + Environment.NewLine);
+        byte[] buffer = Encoding.ASCII.GetBytes(data);
         stream.Write(buffer, 0, buffer.Length);
     }
 

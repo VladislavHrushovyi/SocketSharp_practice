@@ -3,9 +3,4 @@
 using SimpleClient;
 
 var sender  = new SocketSenderMessage("127.0.0.1", 10000);
-var text = string.Empty;
-while (text != "exit")
-{
-    text = Console.ReadLine();
-    sender.SendMessage(text);
-}
+sender.SendMessage();
