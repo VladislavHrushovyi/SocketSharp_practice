@@ -82,7 +82,7 @@ public class SocketImageApplication
     private void BroadcastData(string data)
     {
         byte[] buffer = Encoding.ASCII.GetBytes(data + Environment.NewLine);
-
+        Console.WriteLine("send " + buffer.Length + " bytes");
         lock (_lockObject)
         {
             foreach (var client in _clients.Values)
