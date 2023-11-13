@@ -2,5 +2,5 @@
 
 using SimpleClient;
 
-var sender  = new SocketSenderMessage("127.0.0.1", 10000);
+var sender  = new SocketTableApplication("127.0.0.1", 10000);
 sender.SendMessage();

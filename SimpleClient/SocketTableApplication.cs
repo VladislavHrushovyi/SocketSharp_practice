@@ -3,14 +3,14 @@ using System.Text;
 
 namespace SimpleClient;
 
-public class SocketSenderMessage
+public class SocketTableApplication
 {
     private readonly TcpClient _tcpClient;
     private readonly NetworkStream _stream;
     private readonly Table _table = new ();
     private readonly object _lock = new();
     
-    public SocketSenderMessage(string ip, int port)
+    public SocketTableApplication(string ip, int port)
     {
         _tcpClient = new TcpClient();
         _tcpClient.Connect(ip, port);

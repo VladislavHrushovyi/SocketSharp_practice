@@ -4,16 +4,16 @@ using System.Text;
 
 namespace SimpleSocket;
 
-public class MySocket
+public class SocketImageApplication
 {
     private readonly IDictionary<int, TcpClient> _clients = new Dictionary<int, TcpClient>();
 
-    private readonly TableResource _tableResource = new();
+    private readonly ImageResource _imageResource = new ();
 
     private readonly object _lockObject = new();
     private readonly TcpListener _tcpListener;
 
-    public MySocket(string ip, int port)
+    public SocketImageApplication(string ip, int port)
     {
         IPAddress localAddress = IPAddress.Parse(ip);
         _tcpListener = new TcpListener(localAddress, port);
@@ -51,8 +51,6 @@ public class MySocket
         TcpClient client;
 
         lock (_lockObject) client = _clients[id];
-
-        SendInitialTableToClient(client.GetStream());
         
         while (true)
         {
@@ -68,31 +66,17 @@ public class MySocket
             }
 
             string data = Encoding.ASCII.GetString(buffer, 0, byte_count);
-            _tableResource.UpdateTable(data);
-            BroadcastTable();
-            Console.WriteLine(data);
+            _imageResource.Image = data;
+            BroadcastData(_imageResource.Image);
+            Console.WriteLine(_imageResource.Image + "OTUT");
         }
 
         lock (_lockObject) _clients.Remove(id);
         client.Client.Shutdown(SocketShutdown.Both);
+        Console.WriteLine("Client disconnected");
         client.Close();
 
         return Task.CompletedTask;
-    }
-    
-
-    private void SendInitialTableToClient(NetworkStream stream)
-    {
-        var data = _tableResource.ConvertTableToString();
-        byte[] buffer = Encoding.ASCII.GetBytes(data);
-        stream.Write(buffer, 0, buffer.Length);
-    }
-    
-
-    private void BroadcastTable()
-    {
-        string tableString = _tableResource.ConvertTableToString();
-        BroadcastData(tableString);
     }
 
     private void BroadcastData(string data)
