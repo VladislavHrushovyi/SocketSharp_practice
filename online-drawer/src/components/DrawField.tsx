@@ -1,9 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { Button, Col, Row } from "react-bootstrap";
 
-export const DrawField = () => {
+interface DrawFieldProps{
+    stringImage: string,
+    sendImage: (data: string) => void;
+}
+
+export const DrawField = ({ stringImage, sendImage }:DrawFieldProps) => {
     const canvas = useRef<HTMLCanvasElement | null>(null);
     const [pos, setPos] = useState({ x: 0, y: 0 });
+
+    useEffect(() => {
+
+    }, []) 
 
     const setPosition = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (e.buttons !== 1) {
@@ -50,8 +59,14 @@ export const DrawField = () => {
     };
 
     const endDrawing = () => {
+        const ctx = canvas.current?.getContext("2d");
         const base64Canvas = canvas.current?.toDataURL().split(';base64,')[1];
-        console.log(base64Canvas)
+        console.log("end drawing")
+        sendImage(base64Canvas!);
+        const newImage = "data:image/png;base64,"+stringImage;
+        const img = new Image();
+        img.src = newImage;
+        ctx?.drawImage(img, canvas.current?.width!, canvas.current?.height!)
     }
 
     useEffect(() => {
