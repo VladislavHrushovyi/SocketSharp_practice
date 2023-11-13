@@ -3,10 +3,10 @@ import { Button, Col, Row } from "react-bootstrap";
 
 interface DrawFieldProps{
     stringImage: string,
-    sendImage: (data: string) => void;
+    setNewImageString: (data: string) => void;
 }
 
-export const DrawField = ({ stringImage, sendImage }:DrawFieldProps) => {
+export const DrawField = ({ stringImage, setNewImageString: sendImage }:DrawFieldProps) => {
     const canvas = useRef<HTMLCanvasElement | null>(null);
     const [pos, setPos] = useState({ x: 0, y: 0 });
 
@@ -61,7 +61,6 @@ export const DrawField = ({ stringImage, sendImage }:DrawFieldProps) => {
     const endDrawing = () => {
         const ctx = canvas.current?.getContext("2d");
         const base64Canvas = canvas.current?.toDataURL().split(';base64,')[1];
-        console.log("end drawing")
         sendImage(base64Canvas!);
         const newImage = "data:image/png;base64,"+stringImage;
         const img = new Image();

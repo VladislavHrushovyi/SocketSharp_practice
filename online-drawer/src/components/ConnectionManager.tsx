@@ -1,25 +1,25 @@
 import { Button } from "react-bootstrap"
-import { socket } from "../client/clientSocket";
+//import { socket } from "../client/clientSocket";
 
 export const ConnectionManager = () => {
 
-    function connect() {
-        socket.connect();
-      }
+    // function connect() {
+    //     socket.connect();
+    //   }
     
-      function disconnect() {
-        socket.disconnect();
-      }
+    //   function disconnect() {
+    //     socket.disconnect();
+    //   }
 
     return (
         <>
             <Button
-                onClick={connect}
+                //onClick={connect}
             >
                 Connect
             </Button>
             <Button
-                onClick={disconnect}
+                //onClick={disconnect}
             >
                 Disconnect
             </Button>

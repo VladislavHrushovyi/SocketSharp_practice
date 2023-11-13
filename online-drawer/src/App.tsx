@@ -1,48 +1,62 @@
 import { Col, Row } from 'react-bootstrap'
 import './App.css'
 import { DrawField } from './components/DrawField'
-import { useEffect, useState } from 'react'
-import { socket } from './client/clientSocket';
+import {useEffect, useState } from 'react'
+//import { socket } from './client/clientSocket';
 import { ConnectionState } from './components/ConnectionState';
 import { ConnectionManager } from './components/ConnectionManager';
+import useWebSocket from 'react-use-websocket';
 
 
 function App() {
 
-  const [isConnected, setConnected] = useState<boolean>(socket.connected);
+  const [isConnected, setConnected] = useState<boolean>(false);
   const [stringImage, setStringImage] = useState<string>("");
+  const {sendMessage, lastMessage, readyState} = useWebSocket("wss://127.0.0.1:10000");
 
+  // const sendImage = (data: string) => {
+  //   console.log("send image")
+  //   socket.emit("new data", data, function(dataFromServer: string){
+  //     console.log(dataFromServer + "allo")
+  //   })
+  // }
 
-  const sendImage = (data: string) => {
-    console.log("send image")
-    socket.emit("new data", data, function(dataFromServer: string){
-      console.log(dataFromServer + "allo")
-    })
+  const setImage = (data: string) =>{
+    setStringImage(_ => data);
+    sendMessage(data)
   }
 
   useEffect(() => {
-    function onConnect(){
-      setConnected(true)
+    console.log(lastMessage)
+    if(lastMessage !== null){
+      console.log(lastMessage)
+      setStringImage((_) => `${lastMessage}`);
     }
+  }, [lastMessage, stringImage]);
 
-    function onDisconnect() {
-      setConnected(false);
-    }
+  // useEffect(() => {
+  //   function onConnect(){
+  //     setConnected(true)
+  //   }
 
-    function onChangeImageString(value:string) {
-      setStringImage(_ => value);
-    }
+  //   function onDisconnect() {
+  //     setConnected(false);
+  //   }
 
-    socket.on('connect', onConnect);
-    socket.on('disconnect', onDisconnect);
-    socket.on('change iamge', onChangeImageString);
+  //   function onChangeImageString(value:string) {
+  //     setStringImage(_ => value);
+  //   }
 
-    return () => {
-      socket.off('connect', onConnect);
-      socket.off('disconnect', onDisconnect);
-      socket.off('foo', onChangeImageString);
-    };
-  },[])
+  //   socket.on('connect', onConnect);
+  //   socket.on('disconnect', onDisconnect);
+  //   socket.on('change iamge', onChangeImageString);
+
+  //   return () => {
+  //     socket.off('connect', onConnect);
+  //     socket.off('disconnect', onDisconnect);
+  //     socket.off('foo', onChangeImageString);
+  //   };
+  // },[])
 
   return (
     <>
@@ -59,7 +73,7 @@ function App() {
           </Col>
         </Row>
         <Row>
-          <DrawField stringImage={stringImage} sendImage={sendImage} />
+          <DrawField stringImage={stringImage} setNewImageString={setImage} />
         </Row>
       </Col>
     </>
