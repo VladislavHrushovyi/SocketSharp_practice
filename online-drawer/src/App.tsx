@@ -1,62 +1,58 @@
 import { Col, Row } from 'react-bootstrap'
 import './App.css'
 import { DrawField } from './components/DrawField'
-import {useEffect, useState } from 'react'
-//import { socket } from './client/clientSocket';
+import {useState } from 'react'
 import { ConnectionState } from './components/ConnectionState';
 import { ConnectionManager } from './components/ConnectionManager';
-import useWebSocket from 'react-use-websocket';
 
 
 function App() {
 
   const [isConnected, setConnected] = useState<boolean>(false);
-  const [stringImage, setStringImage] = useState<string>("");
-  const {sendMessage, lastMessage, readyState} = useWebSocket("wss://127.0.0.1:10000");
+  const [receivedMessage, setReceivedMessage] = useState<string>('');
+  const [socket, setSocket] = useState<WebSocket>();
 
-  // const sendImage = (data: string) => {
-  //   console.log("send image")
-  //   socket.emit("new data", data, function(dataFromServer: string){
-  //     console.log(dataFromServer + "allo")
-  //   })
-  // }
 
-  const setImage = (data: string) =>{
-    setStringImage(_ => data);
-    sendMessage(data)
+  const connect = () => {
+    const newSocket = new WebSocket('ws://127.0.0.1:10000');
+    newSocket.onerror = (event) => {
+      console.log(event)
+    }
+    newSocket.onopen = () => {
+      console.log(newSocket.url)
+      console.log('WebSocket connection opened');
+      setConnected(true);
+    };
+
+    newSocket.onmessage = (event) => {
+      const receivedData = event.data;
+      setReceivedMessage(receivedData);
+      console.log('Received:', receivedData);
+    };
+
+    newSocket.onclose = () => {
+      setConnected(false);
+      console.log('WebSocket connection closed');
+    };
+
+    setSocket(newSocket);
+  };
+
+  const closeSocket = () => {
+    if(socket){
+      socket.onclose = () => {
+        setConnected(false)
+        console.log('WebSocket connection closed');
+      };
+    }
   }
 
-  useEffect(() => {
-    console.log(lastMessage)
-    if(lastMessage !== null){
-      console.log(lastMessage)
-      setStringImage((_) => `${lastMessage}`);
+  const sendMessage = (data: string) => {
+    if(socket){
+      socket.send(data)
     }
-  }, [lastMessage, stringImage]);
+  }
 
-  // useEffect(() => {
-  //   function onConnect(){
-  //     setConnected(true)
-  //   }
-
-  //   function onDisconnect() {
-  //     setConnected(false);
-  //   }
-
-  //   function onChangeImageString(value:string) {
-  //     setStringImage(_ => value);
-  //   }
-
-  //   socket.on('connect', onConnect);
-  //   socket.on('disconnect', onDisconnect);
-  //   socket.on('change iamge', onChangeImageString);
-
-  //   return () => {
-  //     socket.off('connect', onConnect);
-  //     socket.off('disconnect', onDisconnect);
-  //     socket.off('foo', onChangeImageString);
-  //   };
-  // },[])
 
   return (
     <>
@@ -69,11 +65,11 @@ function App() {
             <ConnectionState isConnected={isConnected} />
           </Col>
           <Col>
-            <ConnectionManager />
+            <ConnectionManager onConnect={connect} onClose={closeSocket} />
           </Col>
         </Row>
         <Row>
-          <DrawField stringImage={stringImage} setNewImageString={setImage} />
+          <DrawField  setNewImageString={sendMessage} stringImage={receivedMessage}/>
         </Row>
       </Col>
     </>
