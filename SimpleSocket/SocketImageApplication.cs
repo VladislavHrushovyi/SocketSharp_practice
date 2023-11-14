@@ -51,37 +51,46 @@ public class SocketImageApplication
         TcpClient client;
 
         lock (_lockObject) client = _clients[id];
-        
-        while (true)
+        try
         {
-            NetworkStream stream = client.GetStream();
-
-            byte[] buffer = new byte[1024];
-
-            int byte_count = stream.Read(buffer, 0, buffer.Length);
-
-            if (byte_count == 0)
+            while (true)
             {
-                break;
+                NetworkStream stream = client.GetStream();
+
+                //byte[] buffer = new byte[1024*1024];
+                StreamReader reader = new StreamReader(stream);
+                //int byte_count = stream.Read(buffer, 0, buffer.Length);
+
+                // if (byte_count == 0)
+                // {
+                //     break;
+                // }
+
+                //string data = Encoding.ASCII.GetString(buffer, 0, byte_count);
+                string data = reader.ReadToEnd();
+                _imageResource.Image = data;
+                BroadcastData(_imageResource.Image);
+                Console.WriteLine(_imageResource.Image + "OTUT");
             }
-
-            string data = Encoding.ASCII.GetString(buffer, 0, byte_count);
-            _imageResource.Image = data;
-            BroadcastData(_imageResource.Image);
-            Console.WriteLine(_imageResource.Image + "OTUT");
         }
-
-        lock (_lockObject) _clients.Remove(id);
-        client.Client.Shutdown(SocketShutdown.Both);
-        Console.WriteLine("Client disconnected");
-        client.Close();
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+        finally
+        {
+            lock (_lockObject) _clients.Remove(id);
+            client.Client.Shutdown(SocketShutdown.Both);
+            Console.WriteLine("Client disconnected");
+            client.Close();   
+        }
 
         return Task.CompletedTask;
     }
 
     private void BroadcastData(string data)
     {
-        byte[] buffer = Encoding.ASCII.GetBytes(data + Environment.NewLine);
+        byte[] buffer = Encoding.UTF8.GetBytes(data);
         Console.WriteLine("send " + buffer.Length + " bytes");
         lock (_lockObject)
         {
