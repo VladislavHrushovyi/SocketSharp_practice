@@ -11,6 +11,8 @@ public class TableResource
         { 3, 3, 3 }
     };
     
+    public string Text = "Initial";
+    
     public string ConvertTableToString()
     {
         var builder = new StringBuilder();

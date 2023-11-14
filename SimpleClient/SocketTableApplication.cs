@@ -26,9 +26,9 @@ public class SocketTableApplication
         {
             if (!string.IsNullOrEmpty(s))
             {
-                Command command = new(s);
-                _table.UpdateTable(command);
-                s = _table.ConvertTableToString();
+                // Command command = new(s);
+                // _table.UpdateTable(command);
+                // s = _table.ConvertTableToString();
                 
                 lock (_lock)
                 {
@@ -59,10 +59,11 @@ public class SocketTableApplication
         {
             string data = Encoding.ASCII.GetString(buffer, 0, byteCount);
             
-            lock(_lock) _table.UpdateTable(data);
+            //lock(_lock) _table.UpdateTable(data);
             
             Console.Clear();
-            Console.WriteLine(_table.ConvertTableToString());
+            //Console.WriteLine(_table.ConvertTableToString());
+            Console.WriteLine(data);
         }
         
         return Task.CompletedTask;

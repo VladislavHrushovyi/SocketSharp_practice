@@ -68,8 +68,13 @@ public class SocketTableApplication
             }
 
             string data = Encoding.ASCII.GetString(buffer, 0, byte_count);
-            _tableResource.UpdateTable(data);
-            BroadcastTable();
+            //_tableResource.UpdateTable(data);
+            _tableResource.Text = data;
+            if (_tableResource.Text != "Initial")
+            {
+                BroadcastTable();
+            }
+
             Console.WriteLine(data);
         }
 
@@ -83,16 +88,16 @@ public class SocketTableApplication
 
     private void SendInitialTableToClient(NetworkStream stream)
     {
-        var data = _tableResource.ConvertTableToString();
-        byte[] buffer = Encoding.ASCII.GetBytes(data);
+        //var data = _tableResource.ConvertTableToString();
+        byte[] buffer = Encoding.ASCII.GetBytes(_tableResource.Text);
         stream.Write(buffer, 0, buffer.Length);
     }
     
 
     private void BroadcastTable()
     {
-        string tableString = _tableResource.ConvertTableToString();
-        BroadcastData(tableString);
+        //string tableString = _tableResource.ConvertTableToString();
+        BroadcastData(_tableResource.Text);
     }
 
     private void BroadcastData(string data)

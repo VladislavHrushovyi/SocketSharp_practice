@@ -7,9 +7,7 @@ namespace SimpleSocket;
 public class SocketImageApplication
 {
     private readonly IDictionary<int, TcpClient> _clients = new Dictionary<int, TcpClient>();
-
     private readonly ImageResource _imageResource = new ();
-
     private readonly object _lockObject = new();
     private readonly TcpListener _tcpListener;
 
@@ -45,29 +43,40 @@ public class SocketImageApplication
         }
     }
 
-    private Task HandleClient(int clientsCount)
+    private async Task HandleClient(int clientsCount)
     {
         int id = clientsCount;
         TcpClient client;
 
-        lock (_lockObject) client = _clients[id];
+        lock (_lockObject)
+        {
+            if (!_clients.ContainsKey(clientsCount))
+            {
+                return;
+            }
+
+            client = _clients[id];
+        };
         try
         {
             while (true)
             {
                 NetworkStream stream = client.GetStream();
 
-                //byte[] buffer = new byte[1024*1024];
-                StreamReader reader = new StreamReader(stream);
-                //int byte_count = stream.Read(buffer, 0, buffer.Length);
+                byte[] buffer = new byte[1024 * 1024];
+                if (stream == null)
+                {
+                   break;
+                }
+                int byte_count = await stream.ReadAsync(buffer, 0, buffer.Length);
 
-                // if (byte_count == 0)
-                // {
-                //     break;
-                // }
+                if (byte_count == 0)
+                {
+                    // No data available, continue to the next iteration
+                    break;
+                }
 
-                //string data = Encoding.ASCII.GetString(buffer, 0, byte_count);
-                string data = reader.ReadToEnd();
+                string data = Encoding.UTF8.GetString(buffer, 0, byte_count);
                 _imageResource.Image = data;
                 BroadcastData(_imageResource.Image);
                 Console.WriteLine(_imageResource.Image + "OTUT");
@@ -82,10 +91,8 @@ public class SocketImageApplication
             lock (_lockObject) _clients.Remove(id);
             client.Client.Shutdown(SocketShutdown.Both);
             Console.WriteLine("Client disconnected");
-            client.Close();   
+            client.Close();
         }
-
-        return Task.CompletedTask;
     }
 
     private void BroadcastData(string data)
@@ -97,7 +104,10 @@ public class SocketImageApplication
             foreach (var client in _clients.Values)
             {
                 NetworkStream stream = client.GetStream();
-                stream.Write(buffer, 0, buffer.Length);
+                if (client != null)
+                {
+                    stream.Write(buffer, 0, buffer.Length);
+                }
             }
         }
     }
