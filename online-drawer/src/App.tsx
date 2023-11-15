@@ -7,21 +7,24 @@ import { ConnectionManager } from './components/ConnectionManager';
 
 
 function App() {
-
   const [isConnected, setConnected] = useState<boolean>(false);
   const [receivedMessage, setReceivedMessage] = useState<string>('');
-  const [socket, setSocket] = useState<WebSocket>();
-
+  const [socket, setSocket] = useState<WebSocket | null>(null);
 
   const connect = () => {
-    const newSocket = new WebSocket('ws://127.0.0.1:10000');
-    newSocket.onerror = (event) => {
-      console.log(event)
+    if (socket) {
+      socket.close();
     }
+
+    const newSocket = new WebSocket('ws://127.0.0.1:10000', 'websocket');
+    newSocket.onerror = (event) => {
+      console.error('WebSocket error:', event);
+    };
+
     newSocket.onopen = () => {
-      console.log(newSocket.url)
-      console.log('WebSocket connection opened');
       setConnected(true);
+      newSocket.send('aloo');
+      console.log('WebSocket connection opened');
     };
 
     newSocket.onmessage = (event) => {
@@ -39,20 +42,18 @@ function App() {
   };
 
   const closeSocket = () => {
-    if(socket){
-      socket.onclose = () => {
-        setConnected(false)
-        console.log('WebSocket connection closed');
-      };
+    if (socket) {
+      socket.close();
+      setConnected(false);
+      console.log('WebSocket connection closed');
     }
-  }
+  };
 
   const sendMessage = (data: string) => {
-    if(socket){
-      socket.send(data)
+    if (socket) {
+      socket.send(data);
     }
-  }
-
+  };
 
   return (
     <>
@@ -69,11 +70,11 @@ function App() {
           </Col>
         </Row>
         <Row>
-          <DrawField  setNewImageString={sendMessage} stringImage={receivedMessage}/>
+          <DrawField setNewImageString={sendMessage} stringImage={receivedMessage} />
         </Row>
       </Col>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
