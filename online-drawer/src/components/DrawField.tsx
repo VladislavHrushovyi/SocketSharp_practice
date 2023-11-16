@@ -1,18 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { Button, Col, Row } from "react-bootstrap";
 
-interface DrawFieldProps{
-    stringImage: string,
-    setNewImageString: (data: string) => void;
+interface DrawFieldProps {
+    sendImage: (data: string) => void,
+    data: string
 }
 
-export const DrawField = ({ stringImage, setNewImageString: sendImage }:DrawFieldProps) => {
+export const DrawField = ({ sendImage, data }: DrawFieldProps) => {
     const canvas = useRef<HTMLCanvasElement | null>(null);
     const [pos, setPos] = useState({ x: 0, y: 0 });
-
-    useEffect(() => {
-
-    }, []) 
 
     const setPosition = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (e.buttons !== 1) {
@@ -42,9 +38,9 @@ export const DrawField = ({ stringImage, setNewImageString: sendImage }:DrawFiel
         const ctx = canvas.current?.getContext("2d");
         if (ctx) {
             ctx!.beginPath();
-            ctx!.lineWidth = 5;
+            ctx!.lineWidth = 15;
             ctx!.lineCap = "round";
-            ctx!.strokeStyle = "red";
+            ctx!.strokeStyle = "black";
             ctx!.moveTo(pos.x, pos.y);
             setPosition(e);
             ctx!.lineTo(pos.x, pos.y);
@@ -59,18 +55,31 @@ export const DrawField = ({ stringImage, setNewImageString: sendImage }:DrawFiel
     };
 
     const endDrawing = () => {
-        const ctx = canvas.current?.getContext("2d");
-        const base64Canvas = canvas.current?.toDataURL().split(';base64,')[1];
+        const base64Canvas = canvas.current?.toDataURL();
+        console.log(base64Canvas)
         sendImage(base64Canvas!);
-        const newImage = "data:image/png;base64,"+stringImage;
-        const img = new Image();
-        img.src = newImage;
-        ctx?.drawImage(img, canvas.current?.width!, canvas.current?.height!)
     }
 
     useEffect(() => {
         resize();
     }, []);
+
+    useEffect(() => {
+        function changeImage() {
+            console.log("effect")
+            if (data !== "") {
+                const ctx = canvas.current?.getContext("2d");
+                const newImage = new Image();
+                newImage.onload = () => {
+                    ctx?.clearRect(0, 0, canvas.current?.width!, canvas.current?.height!);
+                    ctx?.drawImage(newImage, 0, 0);
+                };
+                newImage.src = data;
+            }
+        }
+
+        changeImage()
+    }, [data]);
 
     return (
         <Row>

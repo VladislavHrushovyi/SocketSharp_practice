@@ -1,59 +1,38 @@
 import { Col, Row } from 'react-bootstrap'
 import './App.css'
 import { DrawField } from './components/DrawField'
-import {useState } from 'react'
+import { useState } from 'react'
 import { ConnectionState } from './components/ConnectionState';
+import getInstance, { Connector } from "./client/signalrConnection"
 import { ConnectionManager } from './components/ConnectionManager';
 
-
 function App() {
-  const [isConnected, setConnected] = useState<boolean>(false);
-  const [receivedMessage, setReceivedMessage] = useState<string>('');
-  const [socket, setSocket] = useState<WebSocket | null>(null);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [imageData, setImageData] = useState<string>("");
+  const [connector, setConnector] = useState<Connector>();
 
   const connect = () => {
-    if (socket) {
-      socket.close();
-    }
+    setConnector(_ => {
+      const connector = getInstance();
+      if (connector) {
+        setIsConnected(true);
+        connector?.events((data) => {
+          console.log("Receive data")
+          setImageData(data)
+        })
+      }
 
-    const newSocket = new WebSocket('ws://127.0.0.1:10000', 'websocket');
-    newSocket.onerror = (event) => {
-      console.error('WebSocket error:', event);
-    };
+      return connector;
+    })
+  }
 
-    newSocket.onopen = () => {
-      setConnected(true);
-      newSocket.send('aloo');
-      console.log('WebSocket connection opened');
-    };
+  const applyNewImageData = (data: string) => {
+    connector?.newMessage(data)
+  }
 
-    newSocket.onmessage = (event) => {
-      const receivedData = event.data;
-      setReceivedMessage(receivedData);
-      console.log('Received:', receivedData);
-    };
-
-    newSocket.onclose = () => {
-      setConnected(false);
-      console.log('WebSocket connection closed');
-    };
-
-    setSocket(newSocket);
-  };
-
-  const closeSocket = () => {
-    if (socket) {
-      socket.close();
-      setConnected(false);
-      console.log('WebSocket connection closed');
-    }
-  };
-
-  const sendMessage = (data: string) => {
-    if (socket) {
-      socket.send(data);
-    }
-  };
+  const disconnect = () => {
+    setIsConnected(false);
+  }
 
   return (
     <>
@@ -66,11 +45,11 @@ function App() {
             <ConnectionState isConnected={isConnected} />
           </Col>
           <Col>
-            <ConnectionManager onConnect={connect} onClose={closeSocket} />
+            <ConnectionManager onConnect={connect} onClose={disconnect} />
           </Col>
         </Row>
         <Row>
-          <DrawField setNewImageString={sendMessage} stringImage={receivedMessage} />
+          <DrawField sendImage={applyNewImageData} data={imageData} />
         </Row>
       </Col>
     </>
