@@ -11,9 +11,9 @@ function App() {
   const [imageData, setImageData] = useState<string>("");
   const [connector, setConnector] = useState<Connector>();
 
-  const connect = () => {
+  const connect = (url: string) => {
     setConnector(_ => {
-      const connector = getInstance();
+      const connector = getInstance(url);
       if (connector) {
         setIsConnected(true);
         connector?.events((data) => {
@@ -44,7 +44,7 @@ function App() {
           <Row>
             <ConnectionState isConnected={isConnected} />
           </Row>
-          <Row>
+          <Row className='flex content-center items-center justify-center'>
             <ConnectionManager onConnect={connect} onClose={disconnect} />
           </Row>
         </Col>
