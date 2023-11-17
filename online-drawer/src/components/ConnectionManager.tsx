@@ -1,4 +1,4 @@
-import { Button } from "react-bootstrap"
+import { MyButton } from "./MyButton"
 
 interface ConnectionManagerProps {
     onConnect: () => void,
@@ -17,16 +17,8 @@ export const ConnectionManager = ({onClose, onConnect}:ConnectionManagerProps) =
 
     return (
         <>
-            <Button
-                onClick={connect}
-            >
-                Connect
-            </Button>
-            <Button
-                onClick={disconnect}
-            >
-                Disconnect
-            </Button>
+            <MyButton onClick={connect} text="Connect"/>
+            <MyButton onClick={disconnect} text="Disconnect"/>
         </>
     )
 }

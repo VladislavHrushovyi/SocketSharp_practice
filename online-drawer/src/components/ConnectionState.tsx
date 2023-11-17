@@ -6,7 +6,7 @@ export const ConnectionState = ({ isConnected }: ConnectionStateProps) => {
 
     return (
         <>
-            <h3>{ '' + isConnected }</h3>
+            <h3>{ 'Connection ' + isConnected }</h3>
         </>
     )
 }

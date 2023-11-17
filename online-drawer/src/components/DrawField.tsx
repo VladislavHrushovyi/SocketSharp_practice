@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { Button, Col, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
+import { ColorPicker } from "./ColorPicker";
+import { LineWidthRange } from "./LineWidthRange";
+import { MyButton } from "./MyButton";
 
 interface DrawFieldProps {
     sendImage: (data: string) => void,
@@ -9,6 +12,8 @@ interface DrawFieldProps {
 export const DrawField = ({ sendImage, data }: DrawFieldProps) => {
     const canvas = useRef<HTMLCanvasElement | null>(null);
     const [pos, setPos] = useState({ x: 0, y: 0 });
+    const [color, setColor] = useState<string>("#ffffff")
+    const [lineWidth, setLineWidth] = useState<number>(12); 
 
     const setPosition = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (e.buttons !== 1) {
@@ -24,10 +29,18 @@ export const DrawField = ({ sendImage, data }: DrawFieldProps) => {
         }
     };
 
+    const changeColor = (color: string) => {
+        setColor(color);
+    }
+
+    const changeLineWidth = (width: number) => {
+        setLineWidth(width);
+    }
+
     const resize = () => {
         const ctx = canvas.current?.getContext("2d");
-        ctx!.canvas.width = 900;
-        ctx!.canvas.height = 500;
+        ctx!.canvas.width = 800;
+        ctx!.canvas.height = 600;
     };
 
     const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -38,9 +51,9 @@ export const DrawField = ({ sendImage, data }: DrawFieldProps) => {
         const ctx = canvas.current?.getContext("2d");
         if (ctx) {
             ctx!.beginPath();
-            ctx!.lineWidth = 15;
+            ctx!.lineWidth = lineWidth;
             ctx!.lineCap = "round";
-            ctx!.strokeStyle = "black";
+            ctx!.strokeStyle = color;
             ctx!.moveTo(pos.x, pos.y);
             setPosition(e);
             ctx!.lineTo(pos.x, pos.y);
@@ -56,7 +69,6 @@ export const DrawField = ({ sendImage, data }: DrawFieldProps) => {
 
     const endDrawing = () => {
         const base64Canvas = canvas.current?.toDataURL();
-        console.log(base64Canvas)
         sendImage(base64Canvas!);
     }
 
@@ -82,27 +94,27 @@ export const DrawField = ({ sendImage, data }: DrawFieldProps) => {
     }, [data]);
 
     return (
-        <Row>
-            <Col>
+        <Row className="flex gap-3">
+            <Col md={2} lg={2} className="">
+                <Row>
+                    <ColorPicker handleColor={changeColor} color={color} />
+                </Row>
+                <Row>
+                    <LineWidthRange width={lineWidth} handleLineWidth={changeLineWidth}/>
+                </Row>
+                <Row>
+                    <MyButton onClick={clear} text="Clear"/>
+                </Row>
+            </Col>
+            <Col lg={5} className="">
                 <canvas
+                    className=""
                     ref={canvas}
                     onMouseMove={(e) => draw(e)}
                     onMouseDown={(e) => setPosition(e)}
                     onMouseEnter={(e) => setPosition(e)}
                     onMouseUp={endDrawing}
                 ></canvas>
-            </Col>
-            <Col>
-                <Button
-                    onClick={clear}
-                >
-                    CLEAR
-                </Button>
-                <Button
-                    onClick={resize}
-                >
-                    ReSIZE
-                </Button>
             </Col>
         </Row>
     );

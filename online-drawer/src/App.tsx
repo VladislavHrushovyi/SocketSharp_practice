@@ -36,22 +36,22 @@ function App() {
 
   return (
     <>
-      <Col>
-        <Row>
-          <h1>Малювалка</h1>
-        </Row>
-        <Row>
-          <Col>
+      <Row className=''>
+        <Col>
+          <h1 className='text-lg'>Малювалка</h1>
+        </Col>
+        <Col className='flex-row'>
+          <Row>
             <ConnectionState isConnected={isConnected} />
-          </Col>
-          <Col>
+          </Row>
+          <Row>
             <ConnectionManager onConnect={connect} onClose={disconnect} />
-          </Col>
-        </Row>
+          </Row>
+        </Col>
         <Row>
           <DrawField sendImage={applyNewImageData} data={imageData} />
         </Row>
-      </Col>
+      </Row>
     </>
   );
 }
