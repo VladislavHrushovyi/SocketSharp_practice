@@ -14,7 +14,7 @@ export const LineWidthRange = ({handleLineWidth, width}:LineWidthRangeProps) => 
 
     return (
         <>
-            <Form.Range min={1} max={25} value={width} onChange={handleChange}/>
+            <Form.Range min={1} max={50} value={width} onChange={handleChange}/>
         </>
     )
 }

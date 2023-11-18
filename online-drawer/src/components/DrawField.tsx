@@ -56,8 +56,8 @@ export const DrawField = ({ sendImage, data }: DrawFieldProps) => {
             ctx!.strokeStyle = color;
             ctx!.moveTo(pos.x, pos.y);
             setPosition(e);
-            //const base64Canvas = canvas.current?.toDataURL();
-            //sendImage(base64Canvas!);
+            const base64Canvas = canvas.current?.toDataURL();
+            sendImage(base64Canvas!);
             ctx!.lineTo(pos.x, pos.y);
             ctx!.stroke();
         }
