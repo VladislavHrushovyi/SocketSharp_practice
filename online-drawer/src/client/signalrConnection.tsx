@@ -13,15 +13,13 @@ export class Connector {
 
         this.events = (onImageReceived) => {
             this.connection.on("ImageReceived", (data) => {
-                console.log("received data")
                 onImageReceived(data);
             })
         }
     }
 
     public newMessage = (data: string) => {
-        console.log("send req")
-        this.connection.send("NewMessage", data).then(_ => console.log("sent"));
+        this.connection.send("NewMessage", data);
     }
 
     public static getInstance(url: string): Connector {

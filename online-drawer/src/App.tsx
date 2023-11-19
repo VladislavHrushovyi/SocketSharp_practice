@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { ConnectionState } from './components/ConnectionState';
 import getInstance, { Connector } from "./client/signalrConnection"
 import { ConnectionManager } from './components/ConnectionManager';
+import { LineType } from './types/lineType';
 
 function App() {
   const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -17,7 +18,6 @@ function App() {
       if (connector) {
         setIsConnected(true);
         connector?.events((data) => {
-          console.log("Receive data")
           setImageData(data)
         })
       }
@@ -26,8 +26,8 @@ function App() {
     })
   }
 
-  const applyNewImageData = (data: string) => {
-    connector?.newMessage(data)
+  const applyNewImageData = (data: LineType) => {
+    connector?.newMessage(JSON.stringify(data))
   }
 
   const disconnect = () => {

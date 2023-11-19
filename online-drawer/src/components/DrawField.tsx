@@ -3,17 +3,18 @@ import { Col, Row } from "react-bootstrap";
 import { ColorPicker } from "./ColorPicker";
 import { LineWidthRange } from "./LineWidthRange";
 import { MyButton } from "./MyButton";
+import { LineType } from "../types/lineType";
 
 interface DrawFieldProps {
-    sendImage: (data: string) => void,
+    sendImage: (data: LineType) => void,
     data: string
 }
 
-export const DrawField = ({ sendImage, data }: DrawFieldProps) => {
+export const DrawField = ({ sendImage: sendData, data }: DrawFieldProps) => {
     const canvas = useRef<HTMLCanvasElement | null>(null);
     const [pos, setPos] = useState({ x: 0, y: 0 });
     const [color, setColor] = useState<string>("#ffffff")
-    const [lineWidth, setLineWidth] = useState<number>(12); 
+    const [lineWidth, setLineWidth] = useState<number>(12);
 
     const setPosition = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (e.buttons !== 1) {
@@ -56,8 +57,12 @@ export const DrawField = ({ sendImage, data }: DrawFieldProps) => {
             ctx!.strokeStyle = color;
             ctx!.moveTo(pos.x, pos.y);
             setPosition(e);
-            const base64Canvas = canvas.current?.toDataURL();
-            sendImage(base64Canvas!);
+            sendData({
+                x: pos.x,
+                y: pos.y,
+                lineWidth: lineWidth,
+                color: color
+            });
             ctx!.lineTo(pos.x, pos.y);
             ctx!.stroke();
         }
@@ -70,8 +75,12 @@ export const DrawField = ({ sendImage, data }: DrawFieldProps) => {
     };
 
     const endDrawing = () => {
-        const base64Canvas = canvas.current?.toDataURL();
-        sendImage(base64Canvas!);
+        sendData({
+            x: pos.x,
+            y: pos.y,
+            lineWidth: lineWidth,
+            color: color
+        });
     }
 
     useEffect(() => {
@@ -80,15 +89,18 @@ export const DrawField = ({ sendImage, data }: DrawFieldProps) => {
 
     useEffect(() => {
         function changeImage() {
-            console.log("effect")
             if (data !== "") {
                 const ctx = canvas.current?.getContext("2d");
-                const newImage = new Image();
-                newImage.onload = () => {
-                    ctx?.clearRect(0, 0, canvas.current?.width!, canvas.current?.height!);
-                    ctx?.drawImage(newImage, 0, 0);
-                };
-                newImage.src = data;
+                if (ctx) {
+                    const dotData: LineType = JSON.parse(data)
+                    ctx!.beginPath();
+                    ctx!.lineWidth = dotData.lineWidth;
+                    ctx!.lineCap = "round";
+                    ctx!.strokeStyle = dotData.color;
+                    ctx!.moveTo(dotData.x, dotData.y);
+                    ctx!.lineTo(dotData.x, dotData.y);
+                    ctx!.stroke();
+                }
             }
         }
 
@@ -102,10 +114,10 @@ export const DrawField = ({ sendImage, data }: DrawFieldProps) => {
                     <ColorPicker handleColor={changeColor} color={color} />
                 </Row>
                 <Row>
-                    <LineWidthRange width={lineWidth} handleLineWidth={changeLineWidth}/>
+                    <LineWidthRange width={lineWidth} handleLineWidth={changeLineWidth} />
                 </Row>
                 <Row>
-                    <MyButton onClick={clear} text="Clear"/>
+                    <MyButton onClick={clear} text="Clear" />
                 </Row>
             </Col>
             <Col lg={5} className="">
