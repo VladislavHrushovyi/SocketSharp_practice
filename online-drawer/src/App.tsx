@@ -1,39 +1,12 @@
 import { Col, Row } from 'react-bootstrap'
 import './App.css'
 import { DrawField } from './components/DrawField'
-import { useState } from 'react'
 import { ConnectionState } from './components/ConnectionState';
-import getInstance, { Connector } from "./client/signalrConnection"
 import { ConnectionManager } from './components/ConnectionManager';
-import { LineType } from './types/lineType';
+import { connectionHandler } from './client/connectionHandler';
 
 function App() {
-  const [isConnected, setIsConnected] = useState<boolean>(false);
-  const [imageData, setImageData] = useState<string>("");
-  const [connector, setConnector] = useState<Connector>();
-
-  const connect = (url: string) => {
-    setConnector(_ => {
-      const connector = getInstance(url);
-      if (connector) {
-        setIsConnected(true);
-        connector?.events((data) => {
-          setImageData(data)
-        })
-      }
-
-      return connector;
-    })
-  }
-
-  const applyNewImageData = (data: LineType) => {
-    connector?.newMessage(JSON.stringify(data))
-  }
-
-  const disconnect = () => {
-    setIsConnected(false);
-  }
-
+  const connHandler = connectionHandler();
   return (
     <>
       <Row className=''>
@@ -42,14 +15,14 @@ function App() {
         </Col>
         <Col className='flex-row'>
           <Row>
-            <ConnectionState isConnected={isConnected} />
+            <ConnectionState isConnected={connHandler.isConnected} />
           </Row>
           <Row className='flex content-center items-center justify-center'>
-            <ConnectionManager onConnect={connect} onClose={disconnect} />
+            <ConnectionManager onConnect={connHandler.connect} onClose={connHandler.disconnect} />
           </Row>
         </Col>
         <Row>
-          <DrawField sendImage={applyNewImageData} data={imageData} />
+          <DrawField sendImage={connHandler.applyNewImageData} data={connHandler.imageData} />
         </Row>
       </Row>
     </>
