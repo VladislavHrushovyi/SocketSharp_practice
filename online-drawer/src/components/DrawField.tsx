@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Col, Row } from "react-bootstrap";
-import { ColorPicker } from "./ColorPicker";
-import { LineWidthRange } from "./LineWidthRange";
-import { MyButton } from "./MyButton";
 import { LineType } from "../types/lineType";
+import { Toolbox } from "./Toolbox";
+import { useToolbox } from "../hooks/useToolbox";
 
 interface DrawFieldProps {
     sendImage: (data: LineType) => void,
@@ -13,8 +12,9 @@ interface DrawFieldProps {
 export const DrawField = ({ sendImage: sendData, data }: DrawFieldProps) => {
     const canvas = useRef<HTMLCanvasElement | null>(null);
     const [pos, setPos] = useState({ x: 0, y: 0 });
-    const [color, setColor] = useState<string>("#ffffff")
-    const [lineWidth, setLineWidth] = useState<number>(12);
+    
+
+    const toolbox = useToolbox(canvas);
 
     const setPosition = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (e.buttons !== 1) {
@@ -30,13 +30,7 @@ export const DrawField = ({ sendImage: sendData, data }: DrawFieldProps) => {
         }
     };
 
-    const changeColor = (color: string) => {
-        setColor(color);
-    }
-
-    const changeLineWidth = (width: number) => {
-        setLineWidth(width);
-    }
+    
 
     const resize = () => {
         const ctx = canvas.current?.getContext("2d");
@@ -52,34 +46,29 @@ export const DrawField = ({ sendImage: sendData, data }: DrawFieldProps) => {
         const ctx = canvas.current?.getContext("2d");
         if (ctx) {
             ctx!.beginPath();
-            ctx!.lineWidth = lineWidth;
+            ctx!.lineWidth = toolbox.lineWidth;
             ctx!.lineCap = "round";
-            ctx!.strokeStyle = color;
+            ctx!.strokeStyle = toolbox.color;
             ctx!.moveTo(pos.x, pos.y);
             setPosition(e);
             sendData({
                 x: pos.x,
                 y: pos.y,
-                lineWidth: lineWidth,
-                color: color
+                lineWidth: toolbox.lineWidth,
+                color: toolbox.color
             });
             ctx!.lineTo(pos.x, pos.y);
             ctx!.stroke();
         }
     };
 
-    const clear = () => {
-        const ctx = canvas.current?.getContext("2d");
-        ctx?.beginPath();
-        ctx?.clearRect(0, 0, canvas.current?.width!, canvas.current?.height!);
-    };
 
     const endDrawing = () => {
         sendData({
             x: pos.x,
             y: pos.y,
-            lineWidth: lineWidth,
-            color: color
+            lineWidth: toolbox.lineWidth,
+            color: toolbox.color
         });
     }
 
@@ -110,15 +99,7 @@ export const DrawField = ({ sendImage: sendData, data }: DrawFieldProps) => {
     return (
         <Row className="flex gap-3">
             <Col md={2} lg={2} className="">
-                <Row>
-                    <ColorPicker handleColor={changeColor} color={color} />
-                </Row>
-                <Row>
-                    <LineWidthRange width={lineWidth} handleLineWidth={changeLineWidth} />
-                </Row>
-                <Row>
-                    <MyButton onClick={clear} text="Clear" />
-                </Row>
+                <Toolbox toolboxUtils={toolbox}/>
             </Col>
             <Col lg={5} className="">
                 <canvas
