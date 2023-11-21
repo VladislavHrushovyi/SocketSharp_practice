@@ -15,7 +15,7 @@ function App() {
         </Col>
         <Col className='flex-row'>
           <Row>
-            <ConnectionState isConnected={connHandler.isConnected} />
+            <ConnectionState isConnected={connHandler.isConnected} userCount={connHandler.userCount}/>
           </Row>
           <Row className='flex content-center items-center justify-center'>
             <ConnectionManager onConnect={connHandler.connect} onClose={connHandler.disconnect} />

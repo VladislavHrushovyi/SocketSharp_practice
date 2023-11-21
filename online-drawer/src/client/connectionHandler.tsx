@@ -6,6 +6,7 @@ export const connectionHandler = () => {
     const [isConnected, setIsConnected] = useState<boolean>(false);
     const [connector, setConnector] = useState<Connector>();
     const [imageData, setImageData] = useState<string>("");
+    const [userCount, setUserCount] = useState<number>(0);
 
     const connect = (url: string) => {
         setConnector(_ => {
@@ -14,6 +15,9 @@ export const connectionHandler = () => {
             setIsConnected(true);
             connector?.events((data) => {
               setImageData(data)
+            }, 
+            (count) =>{
+              setUserCount(count);
             })
           }
     
@@ -31,6 +35,7 @@ export const connectionHandler = () => {
     return {
         isConnected,
         imageData,
+        userCount,
         connect,
         applyNewImageData,
         disconnect
