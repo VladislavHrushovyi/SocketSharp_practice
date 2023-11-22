@@ -34,7 +34,7 @@ export const Toolbox = ({toolboxUtils}: ToolboxProps) => {
                                     : "hover:bg-red-300 bg-red-400"}`}
                         onClick={toolboxUtils.typeDrawing.onPipetka}
                 >
-                    <Eyedropper size={20}/>
+                    <Eyedropper  size={20}/>
                 </Button>
             </Row>
             <Row>
