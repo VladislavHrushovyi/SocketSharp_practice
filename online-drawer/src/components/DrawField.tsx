@@ -45,10 +45,8 @@ export const DrawField = ({ sendImage: sendData, data }: DrawFieldProps) => {
 
         const ctx = canvas.current?.getContext("2d");
         if (ctx) {
+            console.log(ctx?.strokeStyle)
             ctx!.beginPath();
-            ctx!.lineWidth = toolbox.lineWidth;
-            ctx!.lineCap = "round";
-            ctx!.strokeStyle = toolbox.color;
             ctx!.moveTo(pos.x, pos.y);
             setPosition(e);
             sendData({
