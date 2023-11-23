@@ -42,6 +42,7 @@ export const DrawField = ({ sendImage: sendData, data }: DrawFieldProps) => {
     };
 
     const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
+        if(toolbox.typeDrawing.buttonsDrawing.isPipetka) return;
         if (e.buttons !== 1) {
             return;
         }
@@ -70,6 +71,20 @@ export const DrawField = ({ sendImage: sendData, data }: DrawFieldProps) => {
             lineWidth: toolbox.lineWidth,
             color: toolbox.color
         });
+    }
+
+    const onClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+        if (toolbox.typeDrawing.buttonsDrawing.isPipetka) {
+            const bounding = canvas.current?.getBoundingClientRect();
+            const ctx = canvas.current?.getContext("2d");
+            const x = e.clientX - bounding!.left;
+            const y = e.clientY - bounding!.top;
+            const pixel = ctx!.getImageData(x, y, 1, 1);
+            const data = pixel.data;
+
+            const hexColor = `#${data[0].toString(16)}${data[1].toString(16)}${data[2].toString(16)}`;
+            toolbox.changeColor(hexColor)
+        }
     }
 
     useEffect(() => {
@@ -110,6 +125,7 @@ export const DrawField = ({ sendImage: sendData, data }: DrawFieldProps) => {
                     onMouseDown={(e) => setPosition(e)}
                     onMouseEnter={(e) => setPosition(e)}
                     onMouseUp={endDrawing}
+                    onClick={onClick}
                 ></canvas>
             </Col>
         </Row>
