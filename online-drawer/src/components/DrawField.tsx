@@ -56,7 +56,7 @@ export const DrawField = ({ sendImage: sendData, data }: DrawFieldProps) => {
                 x: pos.x,
                 y: pos.y,
                 lineWidth: toolbox.lineWidth,
-                color: toolbox.color
+                color: toolbox.typeDrawing.buttonsDrawing.isEraserDrawing ? "#ffffff" : toolbox.color
             });
             ctx!.lineTo(pos.x, pos.y);
             ctx!.stroke();
@@ -70,7 +70,7 @@ export const DrawField = ({ sendImage: sendData, data }: DrawFieldProps) => {
             x: pos.x,
             y: pos.y,
             lineWidth: toolbox.lineWidth,
-            color: toolbox.color
+            color: toolbox.typeDrawing.buttonsDrawing.isEraserDrawing ? "#ffffff" : toolbox.color
         });
     }
 
