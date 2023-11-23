@@ -6,15 +6,15 @@ interface LineWidthRangeProps {
     width: number
 }
 
-export const LineWidthRange = ({handleLineWidth, width}:LineWidthRangeProps) => {
+export const LineWidthRange = ({ handleLineWidth, width }: LineWidthRangeProps) => {
 
-    const handleChange = (e : ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         handleLineWidth(e.target.valueAsNumber)
     }
 
     return (
         <>
-            <Form.Range min={1} max={50} value={width} onChange={handleChange}/>
+            <Form.Range min={1} max={50} value={width} onChange={handleChange} />
             <Form.Label >{width}px</Form.Label>
         </>
     )

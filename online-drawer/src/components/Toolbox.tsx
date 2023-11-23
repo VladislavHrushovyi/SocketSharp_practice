@@ -8,7 +8,7 @@ interface ToolboxProps {
     toolboxUtils: ToolboxUtils
 }
 
-export const Toolbox = ({toolboxUtils}: ToolboxProps) => {
+export const Toolbox = ({ toolboxUtils }: ToolboxProps) => {
     return (
         <>
             <Row>
@@ -17,24 +17,24 @@ export const Toolbox = ({toolboxUtils}: ToolboxProps) => {
             <Row className="py-4 flex justify-center space-x-4" >
                 <Button className={`border rounded-lg p-2 
                                     ${toolboxUtils.typeDrawing.buttonsDrawing.isSimpleDrawing ? "bg-green-500 hover:bg-green-300"
-                                    : "hover:bg-red-300 bg-red-400"}`}
-                        onClick={toolboxUtils.typeDrawing.onSimpleDrawing}
-                > 
-                    <PencilFill size={20}/> 
+                        : "hover:bg-red-300 bg-red-400"}`}
+                    onClick={toolboxUtils.typeDrawing.onSimpleDrawing}
+                >
+                    <PencilFill size={20} />
                 </Button >
                 <Button className={`border rounded-lg p-2 
                                     ${toolboxUtils.typeDrawing.buttonsDrawing.isEraserDrawing ? "bg-green-500 hover:bg-green-300"
-                                    : "hover:bg-red-300 bg-red-400"}`}
-                        onClick={toolboxUtils.typeDrawing.onEraser}
+                        : "hover:bg-red-300 bg-red-400"}`}
+                    onClick={toolboxUtils.typeDrawing.onEraser}
                 >
-                    <EraserFill size={20}/>
+                    <EraserFill size={20} />
                 </Button>
                 <Button className={`border rounded-lg p-2 
-                                    ${toolboxUtils.typeDrawing.buttonsDrawing.isPipetka? "bg-green-500 hover:bg-green-300"
-                                    : "hover:bg-red-300 bg-red-400"}`}
-                        onClick={toolboxUtils.typeDrawing.onPipetka}
+                                    ${toolboxUtils.typeDrawing.buttonsDrawing.isPipetka ? "bg-green-500 hover:bg-green-300"
+                        : "hover:bg-red-300 bg-red-400"}`}
+                    onClick={toolboxUtils.typeDrawing.onPipetka}
                 >
-                    <Eyedropper  size={20}/>
+                    <Eyedropper size={20} />
                 </Button>
             </Row>
             <Row>

@@ -42,7 +42,7 @@ export const DrawField = ({ sendImage: sendData, data }: DrawFieldProps) => {
     };
 
     const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
-        if(toolbox.typeDrawing.buttonsDrawing.isPipetka) return;
+        if (toolbox.typeDrawing.buttonsDrawing.isPipetka) return;
         if (e.buttons !== 1) {
             return;
         }
@@ -65,7 +65,7 @@ export const DrawField = ({ sendImage: sendData, data }: DrawFieldProps) => {
 
 
     const endDrawing = () => {
-        if(toolbox.typeDrawing.buttonsDrawing.isPipetka) return;
+        if (toolbox.typeDrawing.buttonsDrawing.isPipetka) return;
         sendData({
             x: pos.x,
             y: pos.y,

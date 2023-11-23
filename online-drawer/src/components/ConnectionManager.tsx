@@ -11,12 +11,12 @@ export const ConnectionManager = ({ onClose, onConnect }: ConnectionManagerProps
 
     const [url, setUrl] = useState<string>("");
 
-    const handleChange = (e : ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setUrl(e.target.value)
-    }   
+    }
 
     function connect() {
-        if(url !== ""){
+        if (url !== "") {
             onConnect(url)
         }
     }
@@ -28,11 +28,11 @@ export const ConnectionManager = ({ onClose, onConnect }: ConnectionManagerProps
     return (
         <>
             <InputGroup className="mb-3">
-                <InputGroup.Text 
+                <InputGroup.Text
                     id="basic-addon1"
                     className="px-2 py-3"
-                    >
-                        URL</InputGroup.Text>
+                >
+                    URL</InputGroup.Text>
                 <Form.Control
                     className="w-[300px]"
                     placeholder="Connection string"
