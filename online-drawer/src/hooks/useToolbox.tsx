@@ -13,7 +13,7 @@ export interface ToolboxUtils {
 export const useToolbox = (canvas: MutableRefObject<HTMLCanvasElement | null>): ToolboxUtils => {
     const [color, setColor] = useState<string>("#000000")
     const [lineWidth, setLineWidth] = useState<number>(12);
-    const typeDrawing = useTypeDrawing(canvas, { color: color, lineWidth: lineWidth });
+    const typeDrawing = useTypeDrawing(canvas, { color: color, lineWidth: lineWidth, changeColor: setColor });
     useEffect(() => {
         const ctx = canvas.current?.getContext("2d");
         if (ctx) {

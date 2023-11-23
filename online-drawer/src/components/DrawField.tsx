@@ -65,6 +65,7 @@ export const DrawField = ({ sendImage: sendData, data }: DrawFieldProps) => {
 
 
     const endDrawing = () => {
+        if(toolbox.typeDrawing.buttonsDrawing.isPipetka) return;
         sendData({
             x: pos.x,
             y: pos.y,

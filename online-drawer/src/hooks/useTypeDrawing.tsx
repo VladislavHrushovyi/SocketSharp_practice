@@ -12,7 +12,7 @@ export interface TypeDrawing {
     onSimpleDrawing: () => void;
 }
 
-export const useTypeDrawing = (canvas: MutableRefObject<HTMLCanvasElement | null>, settings: { color: string, lineWidth: number }) : TypeDrawing => {
+export const useTypeDrawing = (canvas: MutableRefObject<HTMLCanvasElement | null>, settings: { color: string, lineWidth: number, changeColor: (color: string) => void }) : TypeDrawing => {
     const [buttonsDrawing, setButtonsDrawing] = useState({ isSimpleDrawing: true, isEraserDrawing: false, isPipetka: false });
 
     const onSimpleDrawing = () => {
