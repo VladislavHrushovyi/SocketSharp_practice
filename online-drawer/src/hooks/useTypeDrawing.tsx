@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { MutableRefObject, useState } from "react";
 
 
 export interface TypeDrawing {
@@ -12,11 +12,12 @@ export interface TypeDrawing {
     onSimpleDrawing: () => void;
 }
 
-export const useTypeDrawing = (ctx: CanvasRenderingContext2D | null | undefined, settings: { color: string, lineWidth: number }) : TypeDrawing => {
+export const useTypeDrawing = (canvas: MutableRefObject<HTMLCanvasElement | null>, settings: { color: string, lineWidth: number }) : TypeDrawing => {
     const [buttonsDrawing, setButtonsDrawing] = useState({ isSimpleDrawing: true, isEraserDrawing: false, isPipetka: false });
 
     const onSimpleDrawing = () => {
         console.log(settings.lineWidth)
+        const ctx = canvas.current?.getContext("2d");
         ctx!.lineWidth = settings.lineWidth;
         ctx!.lineCap = "round";
         ctx!.strokeStyle = settings.color;
@@ -30,6 +31,7 @@ export const useTypeDrawing = (ctx: CanvasRenderingContext2D | null | undefined,
     }
 
     const onEraser = () => {
+        const ctx = canvas.current?.getContext("2d");
         ctx!.lineWidth = settings.lineWidth;
         ctx!.lineCap = "round";
         ctx!.strokeStyle = "#ffffff";

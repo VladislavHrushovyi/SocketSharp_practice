@@ -12,10 +12,8 @@ interface DrawFieldProps {
 export const DrawField = ({ sendImage: sendData, data }: DrawFieldProps) => {
     const canvas = useRef<HTMLCanvasElement | null>(null);
     const [pos, setPos] = useState({ x: 0, y: 0 });
-    
 
     const toolbox = useToolbox(canvas);
-
     const setPosition = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (e.buttons !== 1) {
             return;
@@ -30,12 +28,17 @@ export const DrawField = ({ sendImage: sendData, data }: DrawFieldProps) => {
         }
     };
 
-    
+
 
     const resize = () => {
         const ctx = canvas.current?.getContext("2d");
         ctx!.canvas.width = 1000;
         ctx!.canvas.height = 600;
+        if (ctx) {
+            ctx!.lineWidth = toolbox.lineWidth;
+            ctx!.lineCap = "round";
+            ctx!.strokeStyle = toolbox.color;
+        }
     };
 
     const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -45,7 +48,6 @@ export const DrawField = ({ sendImage: sendData, data }: DrawFieldProps) => {
 
         const ctx = canvas.current?.getContext("2d");
         if (ctx) {
-            console.log(ctx?.strokeStyle)
             ctx!.beginPath();
             ctx!.moveTo(pos.x, pos.y);
             setPosition(e);
@@ -72,6 +74,7 @@ export const DrawField = ({ sendImage: sendData, data }: DrawFieldProps) => {
 
     useEffect(() => {
         resize();
+
     }, []);
 
     useEffect(() => {
@@ -97,7 +100,7 @@ export const DrawField = ({ sendImage: sendData, data }: DrawFieldProps) => {
     return (
         <Row className="flex gap-3">
             <Col md={2} lg={2} className="">
-                <Toolbox toolboxUtils={toolbox}/>
+                <Toolbox toolboxUtils={toolbox} />
             </Col>
             <Col lg={5} className="">
                 <canvas
